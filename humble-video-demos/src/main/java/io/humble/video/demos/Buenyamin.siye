@@ -1,0 +1,40 @@
+import com.xuggle.mediatool.IMediaWriter;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.xuggler.ICodec;
+
+public class VideoCreation {
+
+    public static void main(String[] args) {
+        // Videoabmessungen und Dauer festlegen
+        int width = 640;
+        int height = 480;
+        int duration = 90;  // Dauer des Videos in Sekunden (1,5 Minuten)
+
+        // Pfad zur Ausgabedatei festlegen
+        String outputFile = "mein_video.mp4";
+
+        // Erstelle einen Media Writer
+        IMediaWriter writer = ToolFactory.makeWriter(outputFile);
+
+        // Festlegen des Video Codecs
+        writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_H264, width, height);
+
+        // Festlegen der Frame-Rate
+        writer.setForceInterleave(true);
+        writer.getContainer().setTimeBase(IRational.make(1, 25));
+
+        // Erstelle das Video Frame für Frame
+        for (int i = 0; i < duration * 25; i++) {
+            // Erstelle ein neues Frame
+            IVideoPicture frame = IVideoPicture.make(IPixelFormat.Type.YUV420P, width, height);
+
+            // TODO: Setze die Bilddaten entsprechend der Metamorphose vom Chaos zum Kosmos
+
+            // Füge das Frame zum Video hinzu
+            writer.encodeVideo(0, frame, i * 40, TimeUnit.MILLISECONDS);
+        }
+
+        // Schließe den Media Writer
+        writer.close();
+    }
+}
